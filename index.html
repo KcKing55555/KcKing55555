@@ -7,63 +7,104 @@
     <style>
         body {
             margin: 0;
-            overflow: hidden;
             font-family: 'Courier New', Courier, monospace;
-            background-color: #000;
-            color: #fff;
-            text-align: center;
+            overflow: hidden;
+            background: black;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
-        .reel {
+
+        .game-container {
+            position: relative;
+            width: 100%;
             height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .score {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-size: 20px;
+            color: white;
+        }
+
+        .reel {
+            width: 90%;
+            height: 80%;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 3em;
-            transition: background-color 0.5s;
-        }
-        #score {
-            position: absolute;
-            top: 20px;
-            left: 20px;
             font-size: 2em;
+            text-align: center;
+            border: 3px solid white;
+            margin: 10px;
+            transition: transform 0.3s, background 0.3s;
         }
     </style>
 </head>
 <body>
-    <div id="score">Score: 0</div>
-    <div class="reel" id="reel"></div>
+    <div class="score">Score: <span id="score">0</span></div>
+    <div class="game-container" id="game-container"></div>
 
     <script>
         const messages = [
-            "SCROLL SCROLL SCROLL", "Reel", "Imagine If Ninja Got A Low Taper Fade",
-            "That feeling when knee surgery is tomorrow", "One More reel won’t hurt",
-            "rip lil yom", "Like it or swipe it!", "Reel it in!", 
-            "Double-tap destiny!", "Scroll, laugh, repeat.", 
-            "Trendy til the end-y.", "Catch the reel feels.", 
-            "Loop life forever.", "Swipe to survive!", 
-            "Scroll wars: The ultimate battle.", "Next reel, next thrill!", 
-            "your reel if you scroll"
+            "SCROLL SCROLL SCROLL",
+            "Reel",
+            "Imagine If Ninja Got A Low Taper Fade",
+            "That feeling when knee surgery is tomorrow",
+            "One More reel won't hurt",
+            "rip lil yom",
+            "Like it or swipe it!",
+            "Reel it in!",
+            "Double-tap destiny!",
+            "Scroll, laugh, repeat.",
+            "Trendy til the end-y.",
+            "Catch the reel feels.",
+            "Loop life forever.",
+            "Swipe to survive!",
+            "Scroll wars: The ultimate battle.",
+            "Next reel, next thrill!",
+            "your reel if you scroll",
         ];
 
-        let score = 0;
-        const reel = document.getElementById('reel');
-        const scoreDisplay = document.getElementById('score');
+        const colors = ["#ffadad", "#ffd6a5", "#fdffb6", "#caffbf", "#9bf6ff", "#a0c4ff", "#bdb2ff", "#ffc6ff", "#fffffc"];
 
-        function changeReel() {
-            score++;
-            scoreDisplay.innerText = `Score: ${score}`;
-            reel.innerText = messages[Math.floor(Math.random() * messages.length)];
-            reel.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
+        let score = 0;
+        const gameContainer = document.getElementById("game-container");
+        const scoreDisplay = document.getElementById("score");
+
+        function createReel() {
+            const reel = document.createElement("div");
+            reel.className = "reel";
+            reel.style.background = colors[Math.floor(Math.random() * colors.length)];
+            reel.textContent = messages[Math.floor(Math.random() * messages.length)];
+
+            reel.addEventListener("wheel", (event) => {
+                if (event.deltaY > 0) {
+                    score++;
+                    scoreDisplay.textContent = score;
+                    reel.style.transform = "translateY(-200vh)";
+                    setTimeout(() => {
+                        gameContainer.removeChild(reel);
+                        createReel();
+                    }, 300);
+                }
+            });
+
+            gameContainer.appendChild(reel);
         }
 
-        window.addEventListener('scroll', () => {
-            if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
-                changeReel();
-                window.scrollTo(0, 0);
-            }
-        });
-
-        changeReel();
+        // Create initial reels
+        for (let i = 0; i < 3; i++) {
+            createReel();
+        }
     </script>
 </body>
 </html>
