@@ -9,6 +9,7 @@
             margin: 0;
             overflow: hidden;
             font-family: 'Courier New', Courier, monospace;
+            background-color: #000;
             color: white;
             text-align: center;
         }
@@ -20,9 +21,9 @@
             justify-content: center;
             align-items: center;
             font-size: 3em;
-            transition: background-color 0.5s;
+            transition: transform 0.5s ease;
         }
-        #score {
+        #scoreboard {
             position: absolute;
             top: 20px;
             left: 20px;
@@ -31,7 +32,7 @@
     </style>
 </head>
 <body>
-    <div id="score">Score: 0</div>
+    <div id="scoreboard">Score: 0</div>
     <div class="reel" id="reel"></div>
 
     <script>
@@ -47,14 +48,16 @@
         ];
 
         let score = 0;
-        const reel = document.getElementById('reel');
-        const scoreDisplay = document.getElementById('score');
+        let currentReel = 0;
 
         function changeReel() {
-            score++;
-            scoreDisplay.innerText = `Score: ${score}`;
-            reel.innerText = messages[Math.floor(Math.random() * messages.length)];
+            const reel = document.getElementById('reel');
+            reel.innerText = messages[currentReel];
             reel.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
+            reel.style.transform = `translateY(-${currentReel * 100}vh)`;
+            score++;
+            document.getElementById('scoreboard').innerText = `Score: ${score}`;
+            currentReel = (currentReel + 1) % messages.length;
         }
 
         document.addEventListener('wheel', (event) => {
