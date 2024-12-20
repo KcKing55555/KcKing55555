@@ -10,7 +10,13 @@
             overflow: hidden;
             background-color: black;
             font-family: 'Arial', sans-serif;
+        }
+        #score {
+            position: absolute;
+            top: 20px;
+            left: 20px;
             color: white;
+            font-size: 24px;
         }
         .reel {
             width: 1080px;
@@ -19,17 +25,12 @@
             justify-content: center;
             align-items: center;
             font-size: 48px;
+            color: white;
             position: absolute;
             top: 0;
             left: 50%;
             transform: translateX(-50%);
             transition: background-color 0.5s;
-        }
-        #score {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            font-size: 24px;
         }
     </style>
 </head>
@@ -50,24 +51,45 @@
         ];
 
         let score = 0;
-        let currentReel = 0;
+        const reel = document.getElementById('reel');
 
-        function changeReel() {
-            const reel = document.getElementById('reel');
-            reel.innerText = messages[currentReel];
-            reel.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
-            score++;
-            document.getElementById('score').innerText = `Score: ${score}`;
-            currentReel = (currentReel + 1) % messages.length;
+        function getRandomColor() {
+            const letters = '0123456789ABCDEF';
+            let color = '#';
+            for (let i = 0; i < 6; i++) {
+                color += letters[Math.floor(Math.random() * 16)];
+            }
+            return color;
         }
 
-        window.addEventListener('wheel', (event) => {
+        function scrollReel() {
+            score++;
+            document.getElementById('score').innerText = `Score: ${score}`;
+            reel.innerText = messages[Math.floor(Math.random() * messages.length)];
+            reel.style.backgroundColor = getRandomColor();
+            reel.style.top = `${parseInt(reel.style.top) - 1920}px`;
+            if (parseInt(reel.style.top) <= -1920) {
+                reel.style.top = '0';
+            }
+        }
+
+        document.addEventListener('wheel', (event) => {
             if (event.deltaY > 0) {
-                changeReel();
+                scrollReel();
             }
         });
 
-        changeReel();
+        document.addEventListener('touchstart', (event) => {
+            startY = event.touches[0].clientY;
+        });
+
+        document.addEventListener('touchmove', (event) => {
+            const endY = event.touches[0].clientY;
+            if (startY - endY > 50) {
+                scrollReel();
+                startY = endY;
+            }
+        });
     </script>
 </body>
 </html>
