@@ -97,6 +97,7 @@
         let score = 0;
         let likeCount = 0;
         let currentIndex = 0;
+        let previousIndex = 0; // Track the previous reel index
         let reelContainer = document.getElementById('reelContainer');
         let scoreboard = document.getElementById('scoreboard');
         let likeCounter = document.getElementById('likeCounter');
@@ -116,7 +117,16 @@
             const reel = document.getElementById('reel');
             reel.textContent = messages[currentIndex];
             reel.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
+            previousIndex = currentIndex; // Save the current index before changing it
             currentIndex = (currentIndex + 1) % messages.length;
+        }
+
+        // Function to go back to the previous reel
+        function goBackToPreviousReel() {
+            const reel = document.getElementById('reel');
+            reel.textContent = messages[previousIndex];
+            reel.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
+            currentIndex = previousIndex; // Set the current index to the previous index
         }
 
         // Double tap detection for mobile
@@ -149,44 +159,88 @@
             if (isScrolling) return; // Prevent multiple scrolls before transition ends
             isScrolling = true; // Lock scroll interaction
 
-            // Start scrolling animation
-            reelContainer.style.transform = `translateY(-100%)`;
+            if (event.deltaY > 0) {
+                // Scroll down
+                reelContainer.style.transform = `translateY(-100%)`;
 
-            setTimeout(() => {
-                changeReel(); // Change the content after transition
-                score++; // Increment score
-                scoreboard.textContent = `Score: ${score}`; // Update scoreboard
-                reelContainer.style.transition = 'transform 0.5s ease-in-out';
-                reelContainer.style.transform = 'translateY(0)';
-                
-                // Unlock scroll interaction after the animation
                 setTimeout(() => {
-                    isScrolling = false;
+                    changeReel(); // Change the content after transition
+                    score++; // Increment score
+                    scoreboard.textContent = `Score: ${score}`; // Update scoreboard
+                    reelContainer.style.transition = 'transform 0.5s ease-in-out';
+                    reelContainer.style.transform = 'translateY(0)';
+                    
+                    // Unlock scroll interaction after the animation
+                    setTimeout(() => {
+                        isScrolling = false;
+                    }, 500);
                 }, 500);
-            }, 500);
+            } else {
+                // Scroll up (go back to previous reel)
+                reelContainer.style.transform = `translateY(100%)`;
+
+                setTimeout(() => {
+                    goBackToPreviousReel(); // Go back to the previous reel
+                    score--; // Decrement score for going back
+                    scoreboard.textContent = `Score: ${score}`; // Update scoreboard
+                    reelContainer.style.transition = 'transform 0.5s ease-in-out';
+                    reelContainer.style.transform = 'translateY(0)';
+                    
+                    // Unlock scroll interaction after the animation
+                    setTimeout(() => {
+                        isScrolling = false;
+                    }, 500);
+                }, 500);
+            }
         }
 
-        // Detect swipe for mobile scroll
+        // Detect swipe direction for mobile
         function handleTouchMove(event) {
             if (isScrolling || event.touches.length > 1) return; // Allow single touch
 
             isScrolling = true; // Lock scroll interaction
+            const touchStartY = event.touches[0].clientY; // Start position
+            let touchEndY = 0;
 
-            // Start scrolling animation
-            reelContainer.style.transform = `translateY(-100%)`;
+            event.preventDefault(); // Prevent default scrolling
 
-            setTimeout(() => {
-                changeReel(); // Change the content after transition
-                score++; // Increment score
-                scoreboard.textContent = `Score: ${score}`; // Update scoreboard
-                reelContainer.style.transition = 'transform 0.5s ease-in-out';
-                reelContainer.style.transform = 'translateY(0)';
-                
-                // Unlock scroll interaction after the animation
-                setTimeout(() => {
-                    isScrolling = false;
-                }, 500);
-            }, 500);
+            // Track the touch movement
+            event.target.addEventListener('touchend', function (e) {
+                touchEndY = e.changedTouches[0].clientY; // End position
+                if (touchEndY > touchStartY) {
+                    // Swipe up (go back)
+                    reelContainer.style.transform = `translateY(100%)`;
+
+                    setTimeout(() => {
+                        goBackToPreviousReel(); // Go back to the previous reel
+                        score--; // Decrement score for going back
+                        scoreboard.textContent = `Score: ${score}`; // Update scoreboard
+                        reelContainer.style.transition = 'transform 0.5s ease-in-out';
+                        reelContainer.style.transform = 'translateY(0)';
+
+                        // Unlock scroll interaction after the animation
+                        setTimeout(() => {
+                            isScrolling = false;
+                        }, 500);
+                    }, 500);
+                } else if (touchEndY < touchStartY) {
+                    // Swipe down (go forward)
+                    reelContainer.style.transform = `translateY(-100%)`;
+
+                    setTimeout(() => {
+                        changeReel(); // Change the content after transition
+                        score++; // Increment score
+                        scoreboard.textContent = `Score: ${score}`; // Update scoreboard
+                        reelContainer.style.transition = 'transform 0.5s ease-in-out';
+                        reelContainer.style.transform = 'translateY(0)';
+
+                        // Unlock scroll interaction after the animation
+                        setTimeout(() => {
+                            isScrolling = false;
+                        }, 500);
+                    }, 500);
+                }
+            });
         }
 
         // Detect double-tap on mobile for liking
