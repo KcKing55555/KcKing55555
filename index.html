@@ -13,26 +13,44 @@
             color: white;
             text-align: center;
         }
-        .reel {
+        .reel-container {
+            width: 100vw;
             height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            transition: transform 0.5s ease-in-out;
+        }
+        .reel {
+            height: 80%;
+            width: 80%;
             display: flex;
             justify-content: center;
             align-items: center;
             font-size: 3em;
             position: relative;
-            transition: background-color 0.5s;
+            background-color: #333;
+            color: white;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
         }
         #scoreboard {
             position: absolute;
             top: 20px;
             left: 20px;
             font-size: 1.5em;
+            z-index: 1;
         }
     </style>
 </head>
 <body>
     <div id="scoreboard">Score: 0</div>
-    <div class="reel" id="reel"></div>
+    <div class="reel-container" id="reelContainer">
+        <div class="reel" id="reel"></div>
+    </div>
 
     <script>
         const messages = [
@@ -48,20 +66,40 @@
 
         let score = 0;
         let currentIndex = 0;
+        let reelContainer = document.getElementById('reelContainer');
+        let scoreboard = document.getElementById('scoreboard');
 
         function changeReel() {
             const reel = document.getElementById('reel');
             reel.textContent = messages[currentIndex];
             reel.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
             score++;
-            document.getElementById('scoreboard').textContent = `Score: ${score}`;
+            scoreboard.textContent = `Score: ${score}`;
             currentIndex = (currentIndex + 1) % messages.length;
         }
 
+        let lastScrollTop = 0;
+
         document.addEventListener('wheel', (event) => {
-            if (event.deltaY > 0) {
-                changeReel();
+            const scrollTop = event.deltaY;
+
+            if (scrollTop > 0) {
+                reelContainer.style.transform = `translateY(-100%)`;
+                setTimeout(() => {
+                    changeReel();
+                    reelContainer.style.transition = 'transform 0.5s ease-in-out';
+                    reelContainer.style.transform = 'translateY(0)';
+                }, 500);
+            } else {
+                reelContainer.style.transform = `translateY(100%)`;
+                setTimeout(() => {
+                    changeReel();
+                    reelContainer.style.transition = 'transform 0.5s ease-in-out';
+                    reelContainer.style.transform = 'translateY(0)';
+                }, 500);
             }
+
+            lastScrollTop = scrollTop;
         });
 
         changeReel();
