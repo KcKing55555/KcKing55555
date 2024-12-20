@@ -91,6 +91,8 @@
             "Loop life forever.", "Swipe to survive!", 
             "Scroll wars: The ultimate battle.", "Next reel, next thrill!", 
             "your reel if you scroll", "Diddy Party Invite", "Bills:104 Vikings:0", 
+            "Scroll Wars: The Fanum Menace", // Updated phrase
+            "Next reel, next thrill!", "your reel if you scroll", "Diddy Party Invite", "Bills:104 Vikings:0", 
             "Did you know if you double tap my comment, it will like :)", "Nice Try Diddy"
         ];
 
@@ -119,7 +121,6 @@
             currentIndex = (currentIndex + 1) % messages.length;
         }
 
-        // Double tap detection
         // Double tap detection for mobile
         function handleDoubleTap() {
             const currentTime = new Date().getTime();
@@ -145,26 +146,28 @@
             lastTapTime = currentTime;
         }
 
-        document.addEventListener('wheel', (event) => {
         // Handle mouse wheel for PC scroll
         function handleMouseWheel(event) {
             if (isScrolling) return; // Prevent multiple scrolls before transition ends
             isScrolling = true; // Lock scroll interaction
+
             // Start scrolling animation
             reelContainer.style.transform = `translateY(-100%)`;
+
             setTimeout(() => {
                 changeReel(); // Change the content after transition
                 score++; // Increment score
                 scoreboard.textContent = `Score: ${score}`; // Update scoreboard
                 reelContainer.style.transition = 'transform 0.5s ease-in-out';
                 reelContainer.style.transform = 'translateY(0)';
-                
+
                 // Unlock scroll interaction after the animation
                 setTimeout(() => {
                     isScrolling = false;
                 }, 500);
             }, 500);
         }
+
         // Detect swipe for mobile scroll
         function handleTouchMove(event) {
             if (isScrolling || event.touches.length > 1) return; // Allow single touch
@@ -173,7 +176,7 @@
 
             // Start scrolling animation
             reelContainer.style.transform = `translateY(-100%)`;
-            
+
             setTimeout(() => {
                 changeReel(); // Change the content after transition
                 score++; // Increment score
@@ -186,17 +189,17 @@
                     isScrolling = false;
                 }, 500);
             }, 500);
-        });
         }
 
-        // Detect double-tap by listening for touch events
         // Detect double-tap on mobile for liking
         document.addEventListener('touchstart', handleDoubleTap);
 
         // Detect mouse wheel for scroll interaction on PC
         document.addEventListener('wheel', handleMouseWheel);
+
         // Detect touch move for mobile scroll interaction
         document.addEventListener('touchmove', handleTouchMove);
+
         // Shuffle the messages array when the page loads
         shuffleMessages();
 
