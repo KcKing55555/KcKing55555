@@ -120,7 +120,7 @@
             currentIndex = (currentIndex + 1) % messages.length;
         }
 
-        function goBackToPreviousReel() {
+        function showPreviousReel() {
             const reel = document.getElementById('reel');
             reel.textContent = messages[previousIndex];
             reel.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
@@ -169,7 +169,9 @@
                 reelContainer.style.transform = `translateY(100%)`;
 
                 setTimeout(() => {
-                    goBackToPreviousReel();
+                    changeReel(); // Change to a new reel when scrolling up
+                    score++;
+                    scoreboard.textContent = `Score: ${score}`;
                     reelContainer.style.transition = 'transform 0.5s ease-in-out';
                     reelContainer.style.transform = 'translateY(0)';
 
@@ -192,10 +194,11 @@
             event.target.addEventListener('touchend', function (e) {
                 touchEndY = e.changedTouches[0].clientY;
                 if (touchEndY > touchStartY) {
+                    // Swipe down, show a new reel
                     reelContainer.style.transform = `translateY(100%)`;
 
                     setTimeout(() => {
-                        goBackToPreviousReel();
+                        changeReel(); // Show a new reel when swiping down
                         reelContainer.style.transition = 'transform 0.5s ease-in-out';
                         reelContainer.style.transform = 'translateY(0)';
 
@@ -204,12 +207,11 @@
                         }, 500);
                     }, 500);
                 } else if (touchEndY < touchStartY) {
+                    // Swipe up, show the previous reel
                     reelContainer.style.transform = `translateY(-100%)`;
 
                     setTimeout(() => {
-                        changeReel();
-                        score++;
-                        scoreboard.textContent = `Score: ${score}`;
+                        showPreviousReel(); // Show the previous reel when swiping up
                         reelContainer.style.transition = 'transform 0.5s ease-in-out';
                         reelContainer.style.transform = 'translateY(0)';
 
