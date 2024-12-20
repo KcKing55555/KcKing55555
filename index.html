@@ -89,15 +89,14 @@
             "Double-tap destiny!", "Scroll, laugh, repeat.", 
             "Trendy til the end-y.", "Catch the reel feels.", 
             "Loop life forever.", "Swipe to survive!", 
-            "Scroll Wars: The Fanum Menace", 
-            "Next reel, next thrill!", "your reel if you scroll", "Diddy Party Invite", "Bills:104 Vikings:0", 
+            "Scroll wars: The ultimate battle.", "Next reel, next thrill!", 
+            "your reel if you scroll", "Diddy Party Invite", "Bills:104 Vikings:0", 
             "Did you know if you double tap my comment, it will like :)", "Nice Try Diddy"
         ];
 
         let score = 0;
         let likeCount = 0;
         let currentIndex = 0;
-        let previousIndex = 0; // Track the previous reel index
         let reelContainer = document.getElementById('reelContainer');
         let scoreboard = document.getElementById('scoreboard');
         let likeCounter = document.getElementById('likeCounter');
@@ -105,10 +104,11 @@
         let lastTapTime = 0;
         let heartElement = null;
 
+        // Function to shuffle the messages array
         function shuffleMessages() {
             for (let i = messages.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
-                [messages[i], messages[j]] = [messages[j], messages[i]];
+                [messages[i], messages[j]] = [messages[j], messages[i]]; // Swap elements
             }
         }
 
@@ -116,119 +116,91 @@
             const reel = document.getElementById('reel');
             reel.textContent = messages[currentIndex];
             reel.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
-            previousIndex = currentIndex; // Save the current index before changing it
             currentIndex = (currentIndex + 1) % messages.length;
         }
 
-        function showPreviousReel() {
-            const reel = document.getElementById('reel');
-            reel.textContent = messages[previousIndex];
-            reel.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
-            currentIndex = previousIndex; // Set the current index to the previous index
-        }
-
+        // Double tap detection
+        // Double tap detection for mobile
         function handleDoubleTap() {
             const currentTime = new Date().getTime();
             if (currentTime - lastTapTime < 300) {
+                // Show heart animation
                 heartElement = document.createElement('div');
                 heartElement.classList.add('heart');
                 heartElement.textContent = '❤️';
                 document.body.appendChild(heartElement);
+
+                // Position heart in the center of the screen
                 heartElement.style.left = '50%';
                 heartElement.style.top = '50%';
                 heartElement.style.transform = 'translate(-50%, -50%)';
 
+                // Animate the heart
                 setTimeout(() => {
                     heartElement.remove();
                     likeCount++;
                     likeCounter.textContent = `Likes: ${likeCount}`;
-                }, 600);
+                }, 600); // Remove heart after animation
             }
             lastTapTime = currentTime;
         }
 
+        document.addEventListener('wheel', (event) => {
+        // Handle mouse wheel for PC scroll
         function handleMouseWheel(event) {
-            if (isScrolling) return;
-
-            isScrolling = true;
-            if (event.deltaY > 0) {
-                reelContainer.style.transform = `translateY(-100%)`;
-
+            if (isScrolling) return; // Prevent multiple scrolls before transition ends
+            isScrolling = true; // Lock scroll interaction
+            // Start scrolling animation
+            reelContainer.style.transform = `translateY(-100%)`;
+            setTimeout(() => {
+                changeReel(); // Change the content after transition
+                score++; // Increment score
+                scoreboard.textContent = `Score: ${score}`; // Update scoreboard
+                reelContainer.style.transition = 'transform 0.5s ease-in-out';
+                reelContainer.style.transform = 'translateY(0)';
+                
+                // Unlock scroll interaction after the animation
                 setTimeout(() => {
-                    changeReel();
-                    score++;
-                    scoreboard.textContent = `Score: ${score}`;
-                    reelContainer.style.transition = 'transform 0.5s ease-in-out';
-                    reelContainer.style.transform = 'translateY(0)';
-
-                    setTimeout(() => {
-                        isScrolling = false;
-                    }, 500);
+                    isScrolling = false;
                 }, 500);
-            } else {
-                reelContainer.style.transform = `translateY(100%)`;
-
-                setTimeout(() => {
-                    changeReel(); // Change to a new reel when scrolling up
-                    score++;
-                    scoreboard.textContent = `Score: ${score}`;
-                    reelContainer.style.transition = 'transform 0.5s ease-in-out';
-                    reelContainer.style.transform = 'translateY(0)';
-
-                    setTimeout(() => {
-                        isScrolling = false;
-                    }, 500);
-                }, 500);
-            }
+            }, 500);
         }
-
+        // Detect swipe for mobile scroll
         function handleTouchMove(event) {
-            if (isScrolling || event.touches.length > 1) return;
+            if (isScrolling || event.touches.length > 1) return; // Allow single touch
 
-            isScrolling = true;
-            const touchStartY = event.touches[0].clientY;
-            let touchEndY = 0;
+            isScrolling = true; // Lock scroll interaction
 
-            event.preventDefault();
+            // Start scrolling animation
+            reelContainer.style.transform = `translateY(-100%)`;
+            
+            setTimeout(() => {
+                changeReel(); // Change the content after transition
+                score++; // Increment score
+                scoreboard.textContent = `Score: ${score}`; // Update scoreboard
+                reelContainer.style.transition = 'transform 0.5s ease-in-out';
+                reelContainer.style.transform = 'translateY(0)';
 
-            event.target.addEventListener('touchend', function (e) {
-                touchEndY = e.changedTouches[0].clientY;
-                if (touchEndY > touchStartY) {
-                    // Swipe down, show a new reel
-                    reelContainer.style.transform = `translateY(100%)`;
-
-                    setTimeout(() => {
-                        changeReel(); // Show a new reel when swiping down
-                        reelContainer.style.transition = 'transform 0.5s ease-in-out';
-                        reelContainer.style.transform = 'translateY(0)';
-
-                        setTimeout(() => {
-                            isScrolling = false;
-                        }, 500);
-                    }, 500);
-                } else if (touchEndY < touchStartY) {
-                    // Swipe up, show the previous reel
-                    reelContainer.style.transform = `translateY(-100%)`;
-
-                    setTimeout(() => {
-                        showPreviousReel(); // Show the previous reel when swiping up
-                        reelContainer.style.transition = 'transform 0.5s ease-in-out';
-                        reelContainer.style.transform = 'translateY(0)';
-
-                        setTimeout(() => {
-                            isScrolling = false;
-                        }, 500);
-                    }, 500);
-                }
-            });
+                // Unlock scroll interaction after the animation
+                setTimeout(() => {
+                    isScrolling = false;
+                }, 500);
+            }, 500);
+        });
         }
 
+        // Detect double-tap by listening for touch events
+        // Detect double-tap on mobile for liking
         document.addEventListener('touchstart', handleDoubleTap);
-        document.addEventListener('wheel', handleMouseWheel);
-        document.addEventListener('touchmove', handleTouchMove);
 
+        // Detect mouse wheel for scroll interaction on PC
+        document.addEventListener('wheel', handleMouseWheel);
+        // Detect touch move for mobile scroll interaction
+        document.addEventListener('touchmove', handleTouchMove);
+        // Shuffle the messages array when the page loads
         shuffleMessages();
-        changeReel();
+
+        changeReel(); // Initialize the first message and score
     </script>
 </body>
 </html>
