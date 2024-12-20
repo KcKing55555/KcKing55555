@@ -12,6 +12,7 @@
             background-color: #000;
             color: white;
             text-align: center;
+            height: 100%;
         }
         .reel-container {
             width: 100vw;
@@ -72,6 +73,18 @@
                 opacity: 0;
             }
         }
+        #commentButton {
+            position: absolute;
+            bottom: 30px;
+            font-size: 1.5em;
+            background-color: #3e3e3e;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
+        }
     </style>
 </head>
 <body>
@@ -80,6 +93,7 @@
     <div class="reel-container" id="reelContainer">
         <div class="reel" id="reel"></div>
     </div>
+    <button id="commentButton">Comment</button>
 
     <script>
         const messages = [
@@ -89,7 +103,7 @@
             "Double-tap destiny!", "Scroll, laugh, repeat.", 
             "Trendy til the end-y.", "Catch the reel feels.", 
             "Loop life forever.", "Swipe to survive!", 
-            "Scroll wars: The ultimate battle.", "Next reel, next thrill!", 
+            "Scroll wars: The Fanum Menace", "Next reel, next thrill!", 
             "your reel if you scroll", "Diddy Party Invite", "Bills:104 Vikings:0", 
             "Did you know if you double tap my comment, it will like :)", "Nice Try Diddy"
         ];
@@ -103,6 +117,15 @@
         let isScrolling = false;
         let lastTapTime = 0;
         let heartElement = null;
+        const commentButton = document.getElementById('commentButton');
+
+        // Function to shuffle the messages array
+        function shuffleMessages() {
+            for (let i = messages.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [messages[i], messages[j]] = [messages[j], messages[i]]; // Swap elements
+            }
+        }
 
         function changeReel() {
             const reel = document.getElementById('reel');
@@ -111,7 +134,7 @@
             currentIndex = (currentIndex + 1) % messages.length;
         }
 
-        // Double tap detection
+        // Double tap detection for mobile
         function handleDoubleTap() {
             const currentTime = new Date().getTime();
             if (currentTime - lastTapTime < 300) {
@@ -136,7 +159,8 @@
             lastTapTime = currentTime;
         }
 
-        document.addEventListener('wheel', (event) => {
+        // Handle scroll for both desktop and mobile
+        function handleScroll(event) {
             if (isScrolling) return; // Prevent multiple scrolls before transition ends
 
             isScrolling = true; // Lock scroll interaction
@@ -156,12 +180,23 @@
                     isScrolling = false;
                 }, 500);
             }, 500);
-        });
+        }
 
-        // Detect double-tap by listening for touch events
-        document.addEventListener('touchstart', handleDoubleTap);
+        // Event listeners for both mouse wheel and touch interactions
+        if (window.TouchEvent) {
+            // Mobile: Listen for touchstart
+            document.addEventListener('touchstart', handleDoubleTap);
+            document.addEventListener('touchmove', handleScroll);
+        } else {
+            // Desktop: Listen for mouse wheel
+            document.addEventListener('wheel', handleScroll);
+        }
+
+        // Shuffle the messages array when the page loads
+        shuffleMessages();
 
         changeReel(); // Initialize the first message and score
+
     </script>
 </body>
 </html>
