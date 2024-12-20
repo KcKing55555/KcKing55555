@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scroll of Doom</title>
+    <style>
+        body {
+            margin: 0;
+            overflow-y: scroll;
+            height: 200vh;
+            background: linear-gradient(180deg, #ff7e5f, #feb47b);
+            font-family: 'Pixel', sans-serif;
+            color: white;
+        }
+        .score {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            font-size: 24px;
+            z-index: 1000;
+        }
+        .reel {
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 48px;
+            transition: background 0.5s;
+        }
+    </style>
+</head>
+<body>
+    <div class="score">Score: <span id="score">0</span></div>
+    <div id="reels"></div>
+
+    <script>
+        let score = 0;
+        const scoreElement = document.getElementById('score');
+        const reelsContainer = document.getElementById('reels');
+
+        function createReel() {
+            const reel = document.createElement('div');
+            reel.className = 'reel';
+            reel.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
+            reel.innerText = 'Scroll to continue...';
+            reelsContainer.appendChild(reel);
+        }
+
+        window.addEventListener('scroll', () => {
+            if (window.scrollY + window.innerHeight >= document.body.offsetHeight - 100) {
+                createReel();
+                score++;
+                scoreElement.innerText = score;
+            }
+        });
+
+        for (let i = 0; i < 5; i++) {
+            createReel();
+        }
+    </script>
+</body>
+</html>
