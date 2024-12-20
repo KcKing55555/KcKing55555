@@ -68,6 +68,7 @@
         let currentIndex = 0;
         let reelContainer = document.getElementById('reelContainer');
         let scoreboard = document.getElementById('scoreboard');
+        let isScrolling = false;
 
         function changeReel() {
             const reel = document.getElementById('reel');
@@ -78,31 +79,27 @@
             currentIndex = (currentIndex + 1) % messages.length;
         }
 
-        let lastScrollTop = 0;
-
         document.addEventListener('wheel', (event) => {
-            const scrollTop = event.deltaY;
+            if (isScrolling) return; // Prevent multiple scrolls before transition ends
 
-            if (scrollTop > 0) {
-                reelContainer.style.transform = `translateY(-100%)`;
-                setTimeout(() => {
-                    changeReel();
-                    reelContainer.style.transition = 'transform 0.5s ease-in-out';
-                    reelContainer.style.transform = 'translateY(0)';
-                }, 500);
-            } else {
-                reelContainer.style.transform = `translateY(100%)`;
-                setTimeout(() => {
-                    changeReel();
-                    reelContainer.style.transition = 'transform 0.5s ease-in-out';
-                    reelContainer.style.transform = 'translateY(0)';
-                }, 500);
-            }
+            isScrolling = true; // Lock scroll interaction
 
-            lastScrollTop = scrollTop;
+            // Start scrolling animation
+            reelContainer.style.transform = `translateY(-100%)`;
+            
+            setTimeout(() => {
+                changeReel(); // Change the content after transition
+                reelContainer.style.transition = 'transform 0.5s ease-in-out';
+                reelContainer.style.transform = 'translateY(0)';
+                
+                // Unlock scroll interaction after the animation
+                setTimeout(() => {
+                    isScrolling = false;
+                }, 500);
+            }, 500);
         });
 
-        changeReel();
+        changeReel(); // Initialize the first message and score
     </script>
 </body>
 </html>
