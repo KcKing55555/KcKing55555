@@ -72,6 +72,54 @@
                 opacity: 0;
             }
         }
+        .comment-section {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: #222;
+            color: white;
+            padding: 20px;
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.8);
+            z-index: 2;
+            font-size: 1.2em;
+            max-height: 60vh;
+            overflow-y: auto;
+        }
+        .comment-section .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            color: white;
+            font-size: 1.5em;
+            cursor: pointer;
+        }
+        .comment {
+            margin-bottom: 10px;
+            padding: 5px;
+            background-color: #333;
+            border-radius: 5px;
+            box-shadow: 0 1px 5px rgba(0, 0, 0, 0.6);
+        }
+        .comment .user {
+            font-weight: bold;
+        }
+        .comment .text {
+            margin-top: 5px;
+        }
+        #commentButton {
+            position: absolute;
+            bottom: 30px;
+            font-size: 1.5em;
+            background-color: #3e3e3e;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
+        }
     </style>
 </head>
 <body>
@@ -79,6 +127,27 @@
     <div id="likeCounter">Likes: 0</div>
     <div class="reel-container" id="reelContainer">
         <div class="reel" id="reel"></div>
+    </div>
+    <button id="commentButton">Comment</button>
+
+    <div class="comment-section" id="commentSection">
+        <div class="close-btn" id="closeCommentSection">X</div>
+        <div class="comment">
+            <div class="user">kcking</div>
+            <div class="text">Go Bills</div>
+        </div>
+        <div class="comment">
+            <div class="user">P_Slimer</div>
+            <div class="text">We slime</div>
+        </div>
+        <div class="comment">
+            <div class="user">Jeremiah_Winston</div>
+            <div class="text">Banjonian for life</div>
+        </div>
+        <div class="comment">
+            <div class="user">Jedediah_Winstonian</div>
+            <div class="text">Yipes!</div>
+        </div>
     </div>
 
     <script>
@@ -103,6 +172,9 @@
         let isScrolling = false;
         let lastTapTime = 0;
         let heartElement = null;
+        const commentButton = document.getElementById('commentButton');
+        const commentSection = document.getElementById('commentSection');
+        const closeCommentSection = document.getElementById('closeCommentSection');
 
         // Function to shuffle the messages array
         function shuffleMessages() {
@@ -173,6 +245,16 @@
         shuffleMessages();
 
         changeReel(); // Initialize the first message and score
+
+        // Show the comment section when the "Comment" button is clicked
+        commentButton.addEventListener('click', () => {
+            commentSection.style.display = 'block';
+        });
+
+        // Close the comment section when the "X" is clicked
+        closeCommentSection.addEventListener('click', () => {
+            commentSection.style.display = 'none';
+        });
     </script>
 </body>
 </html>
