@@ -72,6 +72,55 @@
                 opacity: 0;
             }
         }
+        /* Comment section styling */
+        #commentSection {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            color: white;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow-y: auto;
+            z-index: 2;
+        }
+        #commentSection .comments {
+            width: 80%;
+            background-color: #222;
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
+            margin-bottom: 20px;
+        }
+        #commentSection #closeBtn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 2em;
+            color: white;
+            cursor: pointer;
+        }
+        #commentSection .comment {
+            margin: 10px 0;
+            font-size: 1.2em;
+        }
+        #commentButton {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #444;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
+        }
     </style>
 </head>
 <body>
@@ -80,6 +129,20 @@
     <div class="reel-container" id="reelContainer">
         <div class="reel" id="reel"></div>
     </div>
+    
+    <!-- Comment Section -->
+    <div id="commentSection">
+        <div id="closeBtn">X</div>
+        <div class="comments">
+            <div class="comment"><strong>kcking:</strong> Go Bills</div>
+            <div class="comment"><strong>P_Slimer:</strong> We slime</div>
+            <div class="comment"><strong>Jeremiah_Winston:</strong> Banjonian for life</div>
+            <div class="comment"><strong>Jedediah_Winstonian:</strong> Yipes!</div>
+        </div>
+    </div>
+    
+    <!-- Comment Button -->
+    <button id="commentButton">Comments</button>
 
     <script>
         const messages = [
@@ -188,6 +251,18 @@
                 }, 500);
             }, 500);
         }
+
+        // Open comment section
+        document.getElementById('commentButton').addEventListener('click', () => {
+            document.getElementById('commentSection').style.display = 'flex';
+            document.body.style.overflow = 'hidden'; // Prevent scrolling
+        });
+
+        // Close comment section
+        document.getElementById('closeBtn').addEventListener('click', () => {
+            document.getElementById('commentSection').style.display = 'none';
+            document.body.style.overflow = 'auto'; // Enable scrolling
+        });
 
         // Detect double-tap on mobile for liking
         document.addEventListener('touchstart', handleDoubleTap);
