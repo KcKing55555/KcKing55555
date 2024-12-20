@@ -1,120 +1,73 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Scroll of Doom</title>
-  <style>
-    body, html {
-      margin: 0;
-      padding: 0;
-      overflow: hidden;
-      height: 100%;
-      font-family: sans-serif;
-    }
-    #game-container {
-      position: relative;
-      height: 100vh;
-      width: 100%;
-      overflow-y: hidden;
-    }
-    .reel {
-      position: absolute;
-      width: 1080px;
-      height: 1920px;
-      top: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 48px;
-      text-align: center;
-      color: white;
-      font-weight: bold;
-      text-transform: uppercase;
-      transition: all 0.5s ease-in-out;
-    }
-    #score {
-      position: absolute;
-      top: 20px;
-      left: 20px;
-      font-size: 32px;
-      color: white;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scroll of Doom</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: black;
+            font-family: 'Arial', sans-serif;
+            color: white;
+        }
+        .reel {
+            width: 1080px;
+            height: 1920px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 48px;
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            transition: background-color 0.5s;
+        }
+        #score {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 24px;
+        }
+    </style>
 </head>
 <body>
-  <div id="game-container">
     <div id="score">Score: 0</div>
-    <div class="reel"></div>
-  </div>
+    <div class="reel" id="reel"></div>
 
-  <script>
-    const messages = [
-      "SCROLL SCROLL SCROLL", 
-      "Reel", 
-      "Imagine If Ninja Got A Low Taper Fade", 
-      "That feeling when knee surgery is tomorrow", 
-      "One More reel won’t hurt", 
-      "rip lil yom", 
-      "Like it or swipe it!", 
-      "Reel it in!", 
-      "Double-tap destiny!", 
-      "Scroll, laugh, repeat.", 
-      "Trendy til the end-y.", 
-      "Catch the reel feels.", 
-      "Loop life forever.", 
-      "Swipe to survive!", 
-      "Scroll wars: The ultimate battle.", 
-      "Next reel, next thrill!", 
-      "your reel if you scroll"
-    ];
-    const colors = ['#ff4d4d', '#4dff4d', '#4d4dff', '#ff8c00', '#ff00ff', '#00ffcc', '#ffcc00', '#00ccff'];
-    
-    let score = 0;
-    let currentReel = 0;
+    <script>
+        const messages = [
+            "SCROLL SCROLL SCROLL", "Reel", "Imagine If Ninja Got A Low Taper Fade",
+            "That feeling when knee surgery is tomorrow", "One More reel won’t hurt",
+            "rip lil yom", "Like it or swipe it!", "Reel it in!", 
+            "Double-tap destiny!", "Scroll, laugh, repeat.", 
+            "Trendy til the end-y.", "Catch the reel feels.", 
+            "Loop life forever.", "Swipe to survive!", 
+            "Scroll wars: The ultimate battle.", "Next reel, next thrill!", 
+            "your reel if you scroll"
+        ];
 
-    const gameContainer = document.getElementById('game-container');
-    const scoreDisplay = document.getElementById('score');
-    const reel = document.querySelector('.reel');
+        let score = 0;
+        let currentReel = 0;
 
-    function changeReel() {
-      // Randomize message and background color
-      const randomMessage = messages[Math.floor(Math.random() * messages.length)];
-      const randomColor = colors[Math.floor(Math.random() * colors.length)];
+        function changeReel() {
+            const reel = document.getElementById('reel');
+            reel.innerText = messages[currentReel];
+            reel.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
+            score++;
+            document.getElementById('score').innerText = `Score: ${score}`;
+            currentReel = (currentReel + 1) % messages.length;
+        }
 
-      // Update the reel content and background
-      reel.textContent = randomMessage;
-      reel.style.backgroundColor = randomColor;
+        window.addEventListener('wheel', (event) => {
+            if (event.deltaY > 0) {
+                changeReel();
+            }
+        });
 
-      // Increase score
-      score++;
-      scoreDisplay.textContent = `Score: ${score}`;
-
-      // Move the reel down
-      currentReel++;
-      reel.style.top = `${currentReel * 100}%`;
-    }
-
-    // Swipe detection
-    let touchStart = 0;
-
-    gameContainer.addEventListener('touchstart', (e) => {
-      touchStart = e.touches[0].clientY;
-    });
-
-    gameContainer.addEventListener('touchmove', (e) => {
-      const touchEnd = e.touches[0].clientY;
-
-      if (touchStart - touchEnd > 50) {
         changeReel();
-        touchStart = touchEnd;
-      }
-    });
-
-    // Start the game with the first reel
-    changeReel();
-  </script>
+    </script>
 </body>
 </html>
