@@ -104,6 +104,14 @@
         let lastTapTime = 0;
         let heartElement = null;
 
+        // Function to shuffle the messages array
+        function shuffleMessages() {
+            for (let i = messages.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [messages[i], messages[j]] = [messages[j], messages[i]]; // Swap elements
+            }
+        }
+
         function changeReel() {
             const reel = document.getElementById('reel');
             reel.textContent = messages[currentIndex];
@@ -160,6 +168,9 @@
 
         // Detect double-tap by listening for touch events
         document.addEventListener('touchstart', handleDoubleTap);
+
+        // Shuffle the messages array when the page loads
+        shuffleMessages();
 
         changeReel(); // Initialize the first message and score
     </script>
