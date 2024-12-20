@@ -11,29 +11,31 @@
             font-family: 'Courier New', Courier, monospace;
             background-color: #000;
             color: white;
-            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
         }
         .reel {
-            position: absolute;
-            width: 100%;
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
             font-size: 3em;
-            transition: transform 0.5s ease;
-        }
-        #scoreboard {
+            text-align: center;
             position: absolute;
-            top: 20px;
-            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            transition: opacity 0.3s;
+        }
+        .scoreboard {
+            position: absolute;
+            top: 10px;
+            left: 10px;
             font-size: 1.5em;
         }
     </style>
 </head>
 <body>
-    <div id="scoreboard">Score: 0</div>
-    <div class="reel" id="reel"></div>
+    <div class="scoreboard">Score: 0</div>
+    <div class="reel">SCROLL SCROLL SCROLL</div>
 
     <script>
         const messages = [
@@ -46,18 +48,20 @@
             "Scroll wars: The ultimate battle.", "Next reel, next thrill!", 
             "your reel if you scroll"
         ];
-
+        
         let score = 0;
-        let currentReel = 0;
+        const scoreboard = document.querySelector('.scoreboard');
+        const reel = document.querySelector('.reel');
 
         function changeReel() {
-            const reel = document.getElementById('reel');
-            reel.innerText = messages[currentReel];
-            reel.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
-            reel.style.transform = `translateY(-${currentReel * 100}vh)`;
             score++;
-            document.getElementById('scoreboard').innerText = `Score: ${score}`;
-            currentReel = (currentReel + 1) % messages.length;
+            scoreboard.textContent = `Score: ${score}`;
+            reel.style.opacity = 0;
+            setTimeout(() => {
+                reel.textContent = messages[Math.floor(Math.random() * messages.length)];
+                reel.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
+                reel.style.opacity = 1;
+            }, 300);
         }
 
         document.addEventListener('wheel', (event) => {
@@ -65,8 +69,6 @@
                 changeReel();
             }
         });
-
-        changeReel();
     </script>
 </body>
 </html>
