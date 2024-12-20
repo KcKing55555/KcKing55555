@@ -7,10 +7,11 @@
     <style>
         body {
             margin: 0;
-            overflow-y: scroll;
+            overflow: hidden;
             font-family: 'Courier New', Courier, monospace;
             background-color: #000;
             color: #fff;
+            text-align: center;
         }
         .reel {
             height: 100vh;
@@ -21,9 +22,9 @@
             transition: background-color 0.5s;
         }
         #score {
-            position: fixed;
-            top: 10px;
-            left: 10px;
+            position: absolute;
+            top: 20px;
+            left: 20px;
             font-size: 2em;
         }
     </style>
@@ -34,25 +35,29 @@
 
     <script>
         const messages = [
-            "SCROLL SCROLL SCROLL",
-            "Reel",
-            "Imagine If Ninja Got A Low Taper Fade",
-            "That feeling when knee surgery is tomorrow",
-            "One More reel won't hurt",
+            "SCROLL SCROLL SCROLL", "Reel", "Imagine If Ninja Got A Low Taper Fade",
+            "That feeling when knee surgery is tomorrow", "One More reel won’t hurt",
+            "rip lil yom", "Like it or swipe it!", "Reel it in!", 
+            "Double-tap destiny!", "Scroll, laugh, repeat.", 
+            "Trendy til the end-y.", "Catch the reel feels.", 
+            "Loop life forever.", "Swipe to survive!", 
+            "Scroll wars: The ultimate battle.", "Next reel, next thrill!", 
             "your reel if you scroll"
         ];
+
         let score = 0;
+        const reel = document.getElementById('reel');
+        const scoreDisplay = document.getElementById('score');
 
         function changeReel() {
-            const reel = document.getElementById('reel');
+            score++;
+            scoreDisplay.innerText = `Score: ${score}`;
             reel.innerText = messages[Math.floor(Math.random() * messages.length)];
             reel.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
-            score++;
-            document.getElementById('score').innerText = `Score: ${score}`;
         }
 
         window.addEventListener('scroll', () => {
-            if (window.scrollY + window.innerHeight >= document.body.offsetHeight) {
+            if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
                 changeReel();
                 window.scrollTo(0, 0);
             }
