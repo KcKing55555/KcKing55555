@@ -8,29 +8,26 @@
         body {
             margin: 0;
             overflow: hidden;
-            background-color: black;
             font-family: 'Arial', sans-serif;
+            background-color: #fff;
+            color: #000;
+            transition: background-color 0.5s;
         }
         #score {
             position: absolute;
-            top: 20px;
-            left: 20px;
-            color: white;
+            top: 10px;
+            left: 10px;
             font-size: 24px;
+            z-index: 10;
         }
         .reel {
-            width: 1080px;
-            height: 1920px;
+            height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
             font-size: 48px;
-            color: white;
-            position: absolute;
-            top: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            transition: background-color 0.5s;
+            text-align: center;
+            transition: color 0.5s;
         }
     </style>
 </head>
@@ -52,45 +49,23 @@
 
         let score = 0;
         const reel = document.getElementById('reel');
+        const scoreDisplay = document.getElementById('score');
 
-        function getRandomColor() {
-            const letters = '0123456789ABCDEF';
-            let color = '#';
-            for (let i = 0; i < 6; i++) {
-                color += letters[Math.floor(Math.random() * 16)];
-            }
-            return color;
-        }
-
-        function scrollReel() {
+        function changeReel() {
             score++;
-            document.getElementById('score').innerText = Score: ${score};
+            scoreDisplay.innerText = `Score: ${score}`;
             reel.innerText = messages[Math.floor(Math.random() * messages.length)];
-            reel.style.backgroundColor = getRandomColor();
-            reel.style.top = ${parseInt(reel.style.top) - 1920}px;
-            if (parseInt(reel.style.top) <= -1920) {
-                reel.style.top = '0';
-            }
+            document.body.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 90%)`;
+            reel.style.color = `hsl(${Math.random() * 360}, 100%, 20%)`;
         }
 
         document.addEventListener('wheel', (event) => {
             if (event.deltaY > 0) {
-                scrollReel();
+                changeReel();
             }
         });
 
-        document.addEventListener('touchstart', (event) => {
-            startY = event.touches[0].clientY;
-        });
-
-        document.addEventListener('touchmove', (event) => {
-            const endY = event.touches[0].clientY;
-            if (startY - endY > 50) {
-                scrollReel();
-                startY = endY;
-            }
-        });
+        changeReel();
     </script>
 </body>
 </html>
-
