@@ -8,23 +8,29 @@
         body {
             margin: 0;
             overflow: hidden;
-            font-family: 'Courier New', Courier, monospace;
-            color: white;
-            text-align: center;
-        }
-        .reel {
-            height: 100vh;
+            font-family: 'Pixel', sans-serif;
+            background-color: #fff;
+            color: #000;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
-            font-size: 3em;
-            transition: background-color 0.5s;
+            justify-content: center;
+            height: 100vh;
         }
         #score {
             position: absolute;
             top: 20px;
             left: 20px;
-            font-size: 2em;
+            font-size: 24px;
+        }
+        .reel {
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            transition: background-color 0.5s;
         }
     </style>
 </head>
@@ -48,19 +54,27 @@
         const reel = document.getElementById('reel');
         const scoreDisplay = document.getElementById('score');
 
-        function changeReel() {
+        function getRandomColor() {
+            const letters = '0123456789ABCDEF';
+            let color = '#';
+            for (let i = 0; i < 6; i++) {
+                color += letters[Math.floor(Math.random() * 16)];
+            }
+            return color;
+        }
+
+        function updateReel() {
             score++;
             scoreDisplay.innerText = `Score: ${score}`;
             reel.innerText = messages[Math.floor(Math.random() * messages.length)];
-            document.body.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
+            reel.style.backgroundColor = getRandomColor();
         }
 
-        window.addEventListener('scroll', function() {
-            changeReel();
-            window.scrollTo(0, 0);
+        document.addEventListener('wheel', (event) => {
+            if (event.deltaY > 0) {
+                updateReel();
+            }
         });
-
-        changeReel();
     </script>
 </body>
 </html>
