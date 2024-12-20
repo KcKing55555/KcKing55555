@@ -12,7 +12,6 @@
             background-color: #000;
             color: white;
             text-align: center;
-            transition: background-color 0.5s;
         }
         .reel {
             height: 100vh;
@@ -21,6 +20,7 @@
             align-items: center;
             font-size: 3em;
             position: relative;
+            transition: background-color 0.5s;
         }
         #scoreboard {
             position: absolute;
@@ -45,44 +45,26 @@
             "Scroll wars: The ultimate battle.", "Next reel, next thrill!", 
             "your reel if you scroll"
         ];
-        
+
         let score = 0;
-        const reelElement = document.getElementById('reel');
-        const scoreboard = document.getElementById('scoreboard');
+        let currentIndex = 0;
 
-        function getRandomColor() {
-            const letters = '0123456789ABCDEF';
-            let color = '#';
-            for (let i = 0; i < 6; i++) {
-                color += letters[Math.floor(Math.random() * 16)];
-            }
-            return color;
-        }
-
-        function scrollReel() {
+        function changeReel() {
+            const reel = document.getElementById('reel');
+            reel.textContent = messages[currentIndex];
+            reel.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
             score++;
-            scoreboard.innerText = `Score: ${score}`;
-            reelElement.innerText = messages[Math.floor(Math.random() * messages.length)];
-            document.body.style.backgroundColor = getRandomColor();
-            reelElement.style.transform = `translateY(-${score * 100}vh)`;
+            document.getElementById('scoreboard').textContent = `Score: ${score}`;
+            currentIndex = (currentIndex + 1) % messages.length;
         }
 
         document.addEventListener('wheel', (event) => {
             if (event.deltaY > 0) {
-                scrollReel();
+                changeReel();
             }
         });
 
-        document.addEventListener('touchstart', (event) => {
-            startY = event.touches[0].clientY;
-        });
-
-        document.addEventListener('touchmove', (event) => {
-            const endY = event.touches[0].clientY;
-            if (startY - endY > 50) {
-                scrollReel();
-            }
-        });
+        changeReel();
     </script>
 </body>
 </html>
