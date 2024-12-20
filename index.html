@@ -44,10 +44,39 @@
             font-size: 1.5em;
             z-index: 1;
         }
+        #likeCounter {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 1.5em;
+            z-index: 1;
+        }
+        .heart {
+            position: absolute;
+            font-size: 3em;
+            color: red;
+            animation: heartAnimation 0.6s ease-in-out;
+            opacity: 0;
+        }
+        @keyframes heartAnimation {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.5);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 0;
+            }
+        }
     </style>
 </head>
 <body>
     <div id="scoreboard">Score: 0</div>
+    <div id="likeCounter">Likes: 0</div>
     <div class="reel-container" id="reelContainer">
         <div class="reel" id="reel"></div>
     </div>
@@ -65,18 +94,45 @@
         ];
 
         let score = 0;
+        let likeCount = 0;
         let currentIndex = 0;
         let reelContainer = document.getElementById('reelContainer');
         let scoreboard = document.getElementById('scoreboard');
+        let likeCounter = document.getElementById('likeCounter');
         let isScrolling = false;
+        let lastTapTime = 0;
+        let heartElement = null;
 
         function changeReel() {
             const reel = document.getElementById('reel');
             reel.textContent = messages[currentIndex];
             reel.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
-            score++;
-            scoreboard.textContent = `Score: ${score}`;
             currentIndex = (currentIndex + 1) % messages.length;
+        }
+
+        // Double tap detection
+        function handleDoubleTap() {
+            const currentTime = new Date().getTime();
+            if (currentTime - lastTapTime < 300) {
+                // Show heart animation
+                heartElement = document.createElement('div');
+                heartElement.classList.add('heart');
+                heartElement.textContent = '❤️';
+                document.body.appendChild(heartElement);
+
+                // Position heart in the center of the screen
+                heartElement.style.left = '50%';
+                heartElement.style.top = '50%';
+                heartElement.style.transform = 'translate(-50%, -50%)';
+
+                // Animate the heart
+                setTimeout(() => {
+                    heartElement.remove();
+                    likeCount++;
+                    likeCounter.textContent = `Likes: ${likeCount}`;
+                }, 600); // Remove heart after animation
+            }
+            lastTapTime = currentTime;
         }
 
         document.addEventListener('wheel', (event) => {
@@ -89,6 +145,8 @@
             
             setTimeout(() => {
                 changeReel(); // Change the content after transition
+                score++; // Increment score
+                scoreboard.textContent = `Score: ${score}`; // Update scoreboard
                 reelContainer.style.transition = 'transform 0.5s ease-in-out';
                 reelContainer.style.transform = 'translateY(0)';
                 
@@ -98,6 +156,9 @@
                 }, 500);
             }, 500);
         });
+
+        // Detect double-tap by listening for touch events
+        document.addEventListener('touchstart', handleDoubleTap);
 
         changeReel(); // Initialize the first message and score
     </script>
