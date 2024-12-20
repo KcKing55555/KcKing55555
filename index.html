@@ -8,56 +8,57 @@
         body {
             margin: 0;
             overflow-y: scroll;
-            height: 200vh;
-            background: linear-gradient(180deg, #ff7e5f, #feb47b);
-            font-family: 'Pixel', sans-serif;
-            color: white;
-        }
-        .score {
-            position: fixed;
-            top: 10px;
-            left: 10px;
-            font-size: 24px;
-            z-index: 1000;
+            font-family: 'Courier New', Courier, monospace;
+            background-color: #000;
+            color: #fff;
         }
         .reel {
             height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 48px;
-            transition: background 0.5s;
+            font-size: 3em;
+            transition: background-color 0.5s;
+        }
+        #score {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            font-size: 2em;
         }
     </style>
 </head>
 <body>
-    <div class="score">Score: <span id="score">0</span></div>
-    <div id="reels"></div>
+    <div id="score">Score: 0</div>
+    <div class="reel" id="reel"></div>
 
     <script>
+        const messages = [
+            "SCROLL SCROLL SCROLL",
+            "Reel",
+            "Imagine If Ninja Got A Low Taper Fade",
+            "That feeling when knee surgery is tomorrow",
+            "One More reel won't hurt",
+            "your reel if you scroll"
+        ];
         let score = 0;
-        const scoreElement = document.getElementById('score');
-        const reelsContainer = document.getElementById('reels');
 
-        function createReel() {
-            const reel = document.createElement('div');
-            reel.className = 'reel';
+        function changeReel() {
+            const reel = document.getElementById('reel');
+            reel.innerText = messages[Math.floor(Math.random() * messages.length)];
             reel.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
-            reel.innerText = 'Scroll to continue...';
-            reelsContainer.appendChild(reel);
+            score++;
+            document.getElementById('score').innerText = `Score: ${score}`;
         }
 
         window.addEventListener('scroll', () => {
-            if (window.scrollY + window.innerHeight >= document.body.offsetHeight - 100) {
-                createReel();
-                score++;
-                scoreElement.innerText = score;
+            if (window.scrollY + window.innerHeight >= document.body.offsetHeight) {
+                changeReel();
+                window.scrollTo(0, 0);
             }
         });
 
-        for (let i = 0; i < 5; i++) {
-            createReel();
-        }
+        changeReel();
     </script>
 </body>
 </html>
