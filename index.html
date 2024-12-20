@@ -176,13 +176,11 @@
                     }, 500);
                 }, 500);
             } else {
-                // Scroll up (go back to previous reel)
+                // Scroll up (go back to previous reel without affecting score)
                 reelContainer.style.transform = `translateY(100%)`;
 
                 setTimeout(() => {
                     goBackToPreviousReel(); // Go back to the previous reel
-                    score--; // Decrement score for going back
-                    scoreboard.textContent = `Score: ${score}`; // Update scoreboard
                     reelContainer.style.transition = 'transform 0.5s ease-in-out';
                     reelContainer.style.transform = 'translateY(0)';
                     
@@ -213,11 +211,9 @@
 
                     setTimeout(() => {
                         goBackToPreviousReel(); // Go back to the previous reel
-                        score--; // Decrement score for going back
-                        scoreboard.textContent = `Score: ${score}`; // Update scoreboard
                         reelContainer.style.transition = 'transform 0.5s ease-in-out';
                         reelContainer.style.transform = 'translateY(0)';
-
+                        
                         // Unlock scroll interaction after the animation
                         setTimeout(() => {
                             isScrolling = false;
