@@ -1,3 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scroll of Doom</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            font-family: 'Courier New', Courier, monospace;
+            background-color: #000;
+            color: white;
+            text-align: center;
+        }
+        .reel-container {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            transition: transform 0.5s ease-in-out;
+        }
+        .reel {
+            height: 80%;
+            width: 80%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 3em;
+            position: relative;
+            background-color: #333;
+            color: white;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
+        }
+        #scoreboard {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 1.5em;
+            z-index: 1;
+        }
+        #likeCounter {
+            position: absolute;
+            top: 20px;
+            right: 20px;
             font-size: 1.5em;
             z-index: 1;
         }
@@ -22,55 +72,6 @@
                 opacity: 0;
             }
         }
-        /* Comment section styling */
-        #commentSection {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.9);
-            color: white;
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            overflow-y: auto;
-            z-index: 2;
-        }
-        #commentSection .comments {
-            width: 80%;
-            background-color: #222;
-            padding: 10px;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
-            margin-bottom: 20px;
-        }
-        #commentSection #closeBtn {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            font-size: 2em;
-            color: white;
-            cursor: pointer;
-        }
-        #commentSection .comment {
-            margin: 10px 0;
-            font-size: 1.2em;
-        }
-        #commentButton {
-            position: absolute;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: #444;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
-        }
     </style>
 </head>
 <body>
@@ -79,50 +80,153 @@
     <div class="reel-container" id="reelContainer">
         <div class="reel" id="reel"></div>
     </div>
-    
-    <!-- Comment Section -->
-    <div id="commentSection">
-        <div id="closeBtn">X</div>
-        <div class="comments">
-            <div class="comment"><strong>kcking:</strong> Go Bills</div>
-            <div class="comment"><strong>P_Slimer:</strong> We slime</div>
-            <div class="comment"><strong>Jeremiah_Winston:</strong> Banjonian for life</div>
-            <div class="comment"><strong>Jedediah_Winstonian:</strong> Yipes!</div>
-        </div>
-    </div>
-    
-    <!-- Comment Button -->
-    <button id="commentButton">Comments</button>
 
     <script>
         const messages = [
-@@ -252,31 +189,19 @@
-            }, 500);
+            "SCROLL SCROLL SCROLL", "Reel", "Imagine If Ninja Got A Low Taper Fade",
+            "That feeling when knee surgery is tomorrow", "One More reel won’t hurt",
+            "rip lil yom", "Like it or swipe it!", "Reel it in!", 
+            "Double-tap destiny!", "Scroll, laugh, repeat.", 
+            "Trendy til the end-y.", "Catch the reel feels.", 
+            "Loop life forever.", "Swipe to survive!", 
+            "Scroll Wars: The Fanum Menace", 
+            "Next reel, next thrill!", "your reel if you scroll", "Diddy Party Invite", "Bills:104 Vikings:0", 
+            "Did you know if you double tap my comment, it will like :)", "Nice Try Diddy"
+        ];
+
+        let score = 0;
+        let likeCount = 0;
+        let currentIndex = 0;
+        let previousIndex = 0; // Track the previous reel index
+        let reelContainer = document.getElementById('reelContainer');
+        let scoreboard = document.getElementById('scoreboard');
+        let likeCounter = document.getElementById('likeCounter');
+        let isScrolling = false;
+        let lastTapTime = 0;
+        let heartElement = null;
+
+        function shuffleMessages() {
+            for (let i = messages.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [messages[i], messages[j]] = [messages[j], messages[i]];
+            }
         }
 
-        // Open comment section
-        document.getElementById('commentButton').addEventListener('click', () => {
-            document.getElementById('commentSection').style.display = 'flex';
-            document.body.style.overflow = 'hidden'; // Prevent scrolling
-        });
-        // Close comment section
-        document.getElementById('closeBtn').addEventListener('click', () => {
-            document.getElementById('commentSection').style.display = 'none';
-            document.body.style.overflow = 'auto'; // Enable scrolling
-        });
-        // Detect double-tap on mobile for liking
+        function changeReel() {
+            const reel = document.getElementById('reel');
+            reel.textContent = messages[currentIndex];
+            reel.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
+            previousIndex = currentIndex; // Save the current index before changing it
+            currentIndex = (currentIndex + 1) % messages.length;
+        }
+
+        function goBackToPreviousReel() {
+            const reel = document.getElementById('reel');
+            reel.textContent = messages[previousIndex];
+            reel.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
+            currentIndex = previousIndex; // Set the current index to the previous index
+        }
+
+        function handleDoubleTap() {
+            const currentTime = new Date().getTime();
+            if (currentTime - lastTapTime < 300) {
+                heartElement = document.createElement('div');
+                heartElement.classList.add('heart');
+                heartElement.textContent = '❤️';
+                document.body.appendChild(heartElement);
+                heartElement.style.left = '50%';
+                heartElement.style.top = '50%';
+                heartElement.style.transform = 'translate(-50%, -50%)';
+
+                setTimeout(() => {
+                    heartElement.remove();
+                    likeCount++;
+                    likeCounter.textContent = `Likes: ${likeCount}`;
+                }, 600);
+            }
+            lastTapTime = currentTime;
+        }
+
+        function handleMouseWheel(event) {
+            if (isScrolling) return;
+
+            isScrolling = true;
+            if (event.deltaY > 0) {
+                reelContainer.style.transform = `translateY(-100%)`;
+
+                setTimeout(() => {
+                    changeReel();
+                    score++;
+                    scoreboard.textContent = `Score: ${score}`;
+                    reelContainer.style.transition = 'transform 0.5s ease-in-out';
+                    reelContainer.style.transform = 'translateY(0)';
+
+                    setTimeout(() => {
+                        isScrolling = false;
+                    }, 500);
+                }, 500);
+            } else {
+                reelContainer.style.transform = `translateY(100%)`;
+
+                setTimeout(() => {
+                    goBackToPreviousReel();
+                    reelContainer.style.transition = 'transform 0.5s ease-in-out';
+                    reelContainer.style.transform = 'translateY(0)';
+
+                    setTimeout(() => {
+                        isScrolling = false;
+                    }, 500);
+                }, 500);
+            }
+        }
+
+        function handleTouchMove(event) {
+            if (isScrolling || event.touches.length > 1) return;
+
+            isScrolling = true;
+            const touchStartY = event.touches[0].clientY;
+            let touchEndY = 0;
+
+            event.preventDefault();
+
+            event.target.addEventListener('touchend', function (e) {
+                touchEndY = e.changedTouches[0].clientY;
+                if (touchEndY > touchStartY) {
+                    reelContainer.style.transform = `translateY(100%)`;
+
+                    setTimeout(() => {
+                        goBackToPreviousReel();
+                        reelContainer.style.transition = 'transform 0.5s ease-in-out';
+                        reelContainer.style.transform = 'translateY(0)';
+
+                        setTimeout(() => {
+                            isScrolling = false;
+                        }, 500);
+                    }, 500);
+                } else if (touchEndY < touchStartY) {
+                    reelContainer.style.transform = `translateY(-100%)`;
+
+                    setTimeout(() => {
+                        changeReel();
+                        score++;
+                        scoreboard.textContent = `Score: ${score}`;
+                        reelContainer.style.transition = 'transform 0.5s ease-in-out';
+                        reelContainer.style.transform = 'translateY(0)';
+
+                        setTimeout(() => {
+                            isScrolling = false;
+                        }, 500);
+                    }, 500);
+                }
+            });
+        }
+
         document.addEventListener('touchstart', handleDoubleTap);
-
-        // Detect mouse wheel for scroll interaction on PC
         document.addEventListener('wheel', handleMouseWheel);
-
-        // Detect touch move for mobile scroll interaction
         document.addEventListener('touchmove', handleTouchMove);
 
-        // Shuffle the messages array when the page loads
         shuffleMessages();
-
-        changeReel(); // Initialize the first message and score
+        changeReel();
     </script>
 </body>
 </html>
