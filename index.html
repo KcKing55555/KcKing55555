@@ -51,22 +51,26 @@
             font-size: 1.5em;
             z-index: 1;
         }
-        #allowSoundButton {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            padding: 15px 30px;
-            font-size: 1.5em;
-            background-color: #444;
-            color: white;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+        .heart {
+            position: absolute;
+            font-size: 3em;
+            color: red;
+            animation: heartAnimation 0.6s ease-in-out;
+            opacity: 0;
         }
-        #allowSoundButton:hover {
-            background-color: #555;
+        @keyframes heartAnimation {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.5);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 0;
+            }
         }
     </style>
 </head>
@@ -76,10 +80,10 @@
     <div class="reel-container" id="reelContainer">
         <div class="reel" id="reel"></div>
     </div>
-    <button id="allowSoundButton">Allow Sound</button>
 
-    <audio id="backgroundAudio" loop>
-        <source src="background.mp3" type="audio/mpeg">
+    <!-- Background audio -->
+    <audio autoplay loop>
+        <source src="Ocean background meme template (Download link available).mp3" type="audio/mpeg">
         Your browser does not support the audio element.
     </audio>
 
@@ -91,12 +95,13 @@
             "Double-tap destiny!", "Scroll, laugh, repeat.", 
             "Trendy til the end-y.", "Catch the reel feels.", 
             "Loop life forever.", "Swipe to survive!", 
-            "Scroll wars: The ultimate battle.", "Next reel, next thrill!", 
+            "Scroll Wars: The Fanum Menace", "Next reel, next thrill!", 
             "your reel if you scroll", "Diddy Party Invite", "Bills:104 Vikings:0", 
-            "Scroll Wars: The Fanum Menace", "Blud clearly wasn't at the wedding of 88´",
+            "Did you know if you double tap my comment, it will like :)", "Nice Try Diddy",
+            "Blud clearly wasn't at the wedding of 88´", 
             "Blud, was born in 2024. Blud missed OG Fortnite twice. Last week is older than bro",
-            "Check in with Karpov when you goin´ to the big M", 
-            "lil yom did not die for this", 
+            "Check in with Karpov when you goin´ to the big M",
+            "lil yom did not die for this",
             "POV you accidentally throw your 6 week old infant with an incurable virus off 17 stories to get rid of him. It was his fault for not landing it."
         ];
 
@@ -107,8 +112,9 @@
         let scoreboard = document.getElementById('scoreboard');
         let likeCounter = document.getElementById('likeCounter');
         let isScrolling = false;
+        let lastTapTime = 0;
+        let heartElement = null;
 
-        // Shuffle messages
         function shuffleMessages() {
             for (let i = messages.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
@@ -121,6 +127,26 @@
             reel.textContent = messages[currentIndex];
             reel.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
             currentIndex = (currentIndex + 1) % messages.length;
+        }
+
+        function handleDoubleTap() {
+            const currentTime = new Date().getTime();
+            if (currentTime - lastTapTime < 300) {
+                heartElement = document.createElement('div');
+                heartElement.classList.add('heart');
+                heartElement.textContent = '❤️';
+                document.body.appendChild(heartElement);
+                heartElement.style.left = '50%';
+                heartElement.style.top = '50%';
+                heartElement.style.transform = 'translate(-50%, -50%)';
+
+                setTimeout(() => {
+                    heartElement.remove();
+                    likeCount++;
+                    likeCounter.textContent = `Likes: ${likeCount}`;
+                }, 600);
+            }
+            lastTapTime = currentTime;
         }
 
         function handleMouseWheel(event) {
@@ -141,20 +167,30 @@
             }, 500);
         }
 
-        document.addEventListener('wheel', handleMouseWheel);
+        function handleTouchMove(event) {
+            if (isScrolling || event.touches.length > 1) return;
+            isScrolling = true;
 
-        // Initialize reel
+            reelContainer.style.transform = `translateY(-100%)`;
+
+            setTimeout(() => {
+                changeReel();
+                score++;
+                scoreboard.textContent = `Score: ${score}`;
+                reelContainer.style.transition = 'transform 0.5s ease-in-out';
+                reelContainer.style.transform = 'translateY(0)';
+                setTimeout(() => {
+                    isScrolling = false;
+                }, 500);
+            }, 500);
+        }
+
+        document.addEventListener('touchstart', handleDoubleTap);
+        document.addEventListener('wheel', handleMouseWheel);
+        document.addEventListener('touchmove', handleTouchMove);
+
         shuffleMessages();
         changeReel();
-
-        // Handle sound permission
-        const audio = document.getElementById('backgroundAudio');
-        const allowSoundButton = document.getElementById('allowSoundButton');
-
-        allowSoundButton.addEventListener('click', () => {
-            audio.play();
-            allowSoundButton.style.display = 'none'; // Hide button after enabling sound
-        });
     </script>
 </body>
 </html>
