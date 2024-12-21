@@ -81,6 +81,12 @@
         <div class="reel" id="reel"></div>
     </div>
 
+    <!-- Background audio -->
+    <audio autoplay loop>
+        <source src="Ocean background meme template (Download link available).mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+
     <script>
         const messages = [
             "SCROLL SCROLL SCROLL", "Reel", "Imagine If Ninja Got A Low Taper Fade",
@@ -89,11 +95,14 @@
             "Double-tap destiny!", "Scroll, laugh, repeat.", 
             "Trendy til the end-y.", "Catch the reel feels.", 
             "Loop life forever.", "Swipe to survive!", 
-            "Scroll wars: The ultimate battle.", "Next reel, next thrill!", 
+            "Scroll Wars: The Fanum Menace", "Next reel, next thrill!", 
             "your reel if you scroll", "Diddy Party Invite", "Bills:104 Vikings:0", 
-            "Scroll Wars: The Fanum Menace", // Updated phrase
-            "Next reel, next thrill!", "your reel if you scroll", "Diddy Party Invite", "Bills:104 Vikings:0", 
-            "Did you know if you double tap my comment, it will like :)", "Nice Try Diddy"
+            "Did you know if you double tap my comment, it will like :)", "Nice Try Diddy",
+            "Blud clearly wasn't at the wedding of 88´", 
+            "Blud, was born in 2024. Blud missed OG Fortnite twice. Last week is older than bro",
+            "Check in with Karpov when you goin´ to the big M",
+            "lil yom did not die for this",
+            "POV you accidentally throw your 6 week old infant with an incurable virus off 17 stories to get rid of him. It was his fault for not landing it."
         ];
 
         let score = 0;
@@ -106,11 +115,10 @@
         let lastTapTime = 0;
         let heartElement = null;
 
-        // Function to shuffle the messages array
         function shuffleMessages() {
             for (let i = messages.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
-                [messages[i], messages[j]] = [messages[j], messages[i]]; // Swap elements
+                [messages[i], messages[j]] = [messages[j], messages[i]];
             }
         }
 
@@ -121,89 +129,68 @@
             currentIndex = (currentIndex + 1) % messages.length;
         }
 
-        // Double tap detection for mobile
         function handleDoubleTap() {
             const currentTime = new Date().getTime();
             if (currentTime - lastTapTime < 300) {
-                // Show heart animation
                 heartElement = document.createElement('div');
                 heartElement.classList.add('heart');
                 heartElement.textContent = '❤️';
                 document.body.appendChild(heartElement);
-
-                // Position heart in the center of the screen
                 heartElement.style.left = '50%';
                 heartElement.style.top = '50%';
                 heartElement.style.transform = 'translate(-50%, -50%)';
 
-                // Animate the heart
                 setTimeout(() => {
                     heartElement.remove();
                     likeCount++;
                     likeCounter.textContent = `Likes: ${likeCount}`;
-                }, 600); // Remove heart after animation
+                }, 600);
             }
             lastTapTime = currentTime;
         }
 
-        // Handle mouse wheel for PC scroll
         function handleMouseWheel(event) {
-            if (isScrolling) return; // Prevent multiple scrolls before transition ends
-            isScrolling = true; // Lock scroll interaction
+            if (isScrolling) return;
+            isScrolling = true;
 
-            // Start scrolling animation
             reelContainer.style.transform = `translateY(-100%)`;
 
             setTimeout(() => {
-                changeReel(); // Change the content after transition
-                score++; // Increment score
-                scoreboard.textContent = `Score: ${score}`; // Update scoreboard
+                changeReel();
+                score++;
+                scoreboard.textContent = `Score: ${score}`;
                 reelContainer.style.transition = 'transform 0.5s ease-in-out';
                 reelContainer.style.transform = 'translateY(0)';
-
-                // Unlock scroll interaction after the animation
                 setTimeout(() => {
                     isScrolling = false;
                 }, 500);
             }, 500);
         }
 
-        // Detect swipe for mobile scroll
         function handleTouchMove(event) {
-            if (isScrolling || event.touches.length > 1) return; // Allow single touch
+            if (isScrolling || event.touches.length > 1) return;
+            isScrolling = true;
 
-            isScrolling = true; // Lock scroll interaction
-
-            // Start scrolling animation
             reelContainer.style.transform = `translateY(-100%)`;
 
             setTimeout(() => {
-                changeReel(); // Change the content after transition
-                score++; // Increment score
-                scoreboard.textContent = `Score: ${score}`; // Update scoreboard
+                changeReel();
+                score++;
+                scoreboard.textContent = `Score: ${score}`;
                 reelContainer.style.transition = 'transform 0.5s ease-in-out';
                 reelContainer.style.transform = 'translateY(0)';
-
-                // Unlock scroll interaction after the animation
                 setTimeout(() => {
                     isScrolling = false;
                 }, 500);
             }, 500);
         }
 
-        // Detect double-tap on mobile for liking
         document.addEventListener('touchstart', handleDoubleTap);
-
-        // Detect mouse wheel for scroll interaction on PC
         document.addEventListener('wheel', handleMouseWheel);
-
-        // Detect touch move for mobile scroll interaction
         document.addEventListener('touchmove', handleTouchMove);
 
-        // Shuffle the messages array when the page loads
         shuffleMessages();
-
-        changeReel(); // Initialize the first message and score
+        changeReel();
     </script>
 </body>
 </html>
